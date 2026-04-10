@@ -1,5 +1,5 @@
 import { setup, assign } from 'xstate';
-import { OnboardingProfile } from '../../types';
+import type { OnboardingProfile } from '../../types';
 
 export const onboardingMachine = setup({
   types: {
