@@ -1,5 +1,16 @@
+import { lazy, Suspense } from "react";
 import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
-import OnboardingView from "./features/onboarding/OnboardingView";
+import ErrorBoundary from "./components/ErrorBoundary";
+
+const OnboardingView = lazy(() => import("./features/onboarding/OnboardingView"));
+
+function LoadingSpinner() {
+  return (
+    <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="w-12 h-12 border-4 border-linen border-t-amber-muted rounded-full animate-spin"></div>
+    </div>
+  );
+}
 
 function Landing() {
   const navigate = useNavigate();
@@ -25,12 +36,16 @@ function Landing() {
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Landing />} />
-        <Route path="/onboarding" element={<OnboardingView />} />
-      </Routes>
-    </Router>
+    <ErrorBoundary>
+      <Router>
+        <Suspense fallback={<LoadingSpinner />}>
+          <Routes>
+            <Route path="/" element={<Landing />} />
+            <Route path="/onboarding" element={<OnboardingView />} />
+          </Routes>
+        </Suspense>
+      </Router>
+    </ErrorBoundary>
   );
 }
 
