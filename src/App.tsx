@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-route
 import ErrorBoundary from "./components/ErrorBoundary";
 
 const OnboardingView = lazy(() => import("./features/onboarding/OnboardingView"));
+const DashboardView = lazy(() => import("./features/dashboard/DashboardView"));
 
 function LoadingSpinner() {
   return (
@@ -42,6 +43,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Landing />} />
             <Route path="/onboarding" element={<OnboardingView />} />
+            <Route path="/dashboard" element={<DashboardView />} />
           </Routes>
         </Suspense>
       </Router>

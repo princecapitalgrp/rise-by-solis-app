@@ -5,6 +5,8 @@ import { ChevronLeft, ChevronRight, Check, Loader2 } from 'lucide-react';
 import { useState } from 'react';
 import { db } from '../../lib/firebase';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { calculateArchetype } from '../../lib/archetypes';
+import { useNavigate } from 'react-router-dom';
 
 const steps = [
   { id: 'sleepWindow', title: 'Sleep Window', question: 'When do you typically wake up?' },
@@ -22,6 +24,7 @@ const steps = [
 
 export default function OnboardingView() {
   const [state, send] = useMachine(onboardingMachine);
+  const navigate = useNavigate();
   
   const currentStep = steps.find(s => state.matches(s.id as any));
   const progress = (steps.findIndex(s => state.matches(s.id as any)) / (steps.length - 1)) * 100;
@@ -39,8 +42,12 @@ export default function OnboardingView() {
   const handleSubmit = async () => {
     setIsSaving(true);
     try {
+      const archetype = calculateArchetype(state.context);
+      localStorage.setItem('rise_archetype', archetype);
+
       await addDoc(collection(db, 'onboarding'), {
         ...state.context,
+        calculatedArchetype: archetype,
         createdAt: serverTimestamp(),
         status: 'completed'
       });
@@ -69,7 +76,10 @@ export default function OnboardingView() {
           <p className="text-text-walnut mb-8 font-sans">
             Your morning archetype has been established. Preparing your first protocol...
           </p>
-          <button className="w-full bg-text-charcoal text-white py-4 rounded-xl font-semibold shadow-lg">
+          <button 
+            onClick={() => navigate('/dashboard')}
+            className="w-full bg-text-charcoal text-white py-4 rounded-xl font-semibold shadow-lg hover:scale-[1.02] transition-transform"
+          >
             Enter Dashboard
           </button>
         </motion.div>
